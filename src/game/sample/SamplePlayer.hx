@@ -19,6 +19,8 @@ class SamplePlayer extends Entity {
 
 	public function new() {
 		super(5,5);
+		wid = 16;
+		hei = 32;
 
 		// Start point using level entity "PlayerStart"
 		var start = level.data.l_Entities.all_PlayerStart[0];
@@ -53,14 +55,29 @@ class SamplePlayer extends Entity {
 		super.onPreStepX();
 
 		// Right collision
-		if( xr>0.8 && level.hasCollision(cx+1,cy) )
+		if( xr>0.8 && level.hasCollision(cx+1,cy) ) {
 			xr = 0.8;
+			spray();
+			cd.setS("recentlyOnGround",0.1);
+		}
 
 		// Left collision
-		if( xr<0.2 && level.hasCollision(cx-1,cy) )
+		if( xr<0.2 && level.hasCollision(cx-1,cy) ) {
 			xr = 0.2;
+			spray();
+			cd.setS("recentlyOnGround",0.1);
+		}
 	}
 
+	function rumble() {
+		ca.rumble(0.2, 0.06);
+		camera.shakeS(0.33, 1);
+		game.stopFrame();
+	}
+
+	function spray() {
+		fx.bloodSpray(centerX, centerY, Math.atan2(vBase.y, vBase.x));
+	}
 
 	/** Y collisions **/
 	override function onPreStepY() {
@@ -72,13 +89,16 @@ class SamplePlayer extends Entity {
 			vBase.dy = 0;
 			vBump.dy = 0;
 			yr = 1;
-			ca.rumble(0.2, 0.06);
 			onPosManuallyChangedY();
+			spray();
+			rumble();
 		}
 
 		// Ceiling collision
-		if( yr<0.2 && level.hasCollision(cx,cy-1) )
+		if( yr<0.2 && level.hasCollision(cx,cy-1) )  {
 			yr = 0.2;
+			spray();
+		}
 	}
 
 
@@ -90,8 +110,10 @@ class SamplePlayer extends Entity {
 		super.preUpdate();
 
 		walkSpeed = 0;
-		if( onGround )
+		if( onGround ) {
 			cd.setS("recentlyOnGround",0.1); // allows "just-in-time" jumps
+			fx.bloodSpray(centerX, bottom - 3, Math.PI / 2);
+		}
 
 
 		// Jump
@@ -99,7 +121,6 @@ class SamplePlayer extends Entity {
 			vBase.dy = -0.85;
 			setSquashX(0.6);
 			cd.unset("recentlyOnGround");
-			fx.dotsExplosionExample(centerX, centerY, 0xffcc00);
 			ca.rumble(0.05, 0.06);
 		}
 

@@ -169,6 +169,23 @@ class Fx extends GameChildProcess {
 		}
 	}
 
+	public inline function bloodSpray(x:Float, y:Float, ang:Float) {
+		for(i in 0...60)  {
+			var p = allocMain_normal(D.tiles.fxDot, x, y);
+			p.colorizeRandom(0x950814, 0xFF0000);
+			p.onUpdate = p -> {
+				if (collides(p)) {
+					p.dx = p.dy = 0;
+				}
+			}
+			p.moveAng(ang + rnd(0, Math.PI / 2, true), rnd(1, 4));
+			//p.frict = rnd(0.3, 0.6);
+			p.frict = 0.9;
+			p.gy = rnd(0.2, 0.4);
+			p.lifeS = rnd(1, 2);
+		}
+	}
+
 
 	override function update() {
 		super.update();

@@ -78,6 +78,7 @@ class Camera extends GameChildProcess {
 	var invalidateDebugBounds = false;
 	var debugBounds : Null<h2d.Graphics>;
 
+	var rtime : Float = 0;
 
 	public function new() {
 		super();
@@ -217,8 +218,8 @@ class Camera extends GameChildProcess {
 
 		// Shakes
 		if( cd.has("shaking") ) {
-			scroller.x += Math.cos(ftime*1.1)*2.5*shakePower * cd.getRatio("shaking");
-			scroller.y += Math.sin(0.3+ftime*1.7)*2.5*shakePower * cd.getRatio("shaking");
+			scroller.x += Math.cos(rtime*1.1)*2.5*shakePower * cd.getRatio("shaking");
+			scroller.y += Math.sin(0.3+rtime*1.7)*2.5*shakePower * cd.getRatio("shaking");
 		}
 
 		// Scaling
@@ -296,6 +297,7 @@ class Camera extends GameChildProcess {
 
 		final level = Game.ME.level;
 
+		rtime += game.baseTimeMul;
 
 		// Zoom movement
 		var tz = targetZoom;
